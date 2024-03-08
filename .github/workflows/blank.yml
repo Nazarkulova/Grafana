@@ -43,15 +43,25 @@ jobs:
           curl -fsSL -o get_helm.sh https://raw.githubusercontent.com/helm/helm/master/scripts/get-helm-3
           chmod +x get_helm.sh
           sudo ./get_helm.sh
-        
-    - name: Verify kubeconfig    
-      run: kubectl get nodes
       
   #  - name: Create Namespace
   #    run: kubectl create ns grafana
       
-    - name: Deploy grafana
+    - name: Clone Grafana
+      uses: GuillaumeFalourd/clone-github-repo-action@v2.3
+      with:
+        depth: 1
+        branch: 'main'
+        owner: 'Nazarkulova'
+        repository: 'Grafana'
+    
+    - name: Access cloned repo
       run: |
-       helm repo add grafana https://grafana.github.io/helm-charts
-       helm install my-grafana grafana/grafana --version 7.3.3
+         cd Grafana
+         ls -la
+
+    - name: Deploy Helm Chart
+      run: |
+        helm repo add grafana https://grafana.github.io/helm-charts
+        helm upgrade my-grafana grafana/grafana -f values.yaml -f values-dev.yaml -n grafana
  
