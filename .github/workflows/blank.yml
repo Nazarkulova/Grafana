@@ -63,5 +63,5 @@ jobs:
     - name: Deploy Helm Chart
       run: |
         helm repo add grafana https://grafana.github.io/helm-charts
-        helm upgrade my-grafana grafana/grafana -f values.yaml -f values-dev.yaml -n grafana
+        helm upgrade my-grafana grafana/grafana -f value.yaml -f values-dev.yaml -n grafana
  
