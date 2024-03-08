@@ -47,8 +47,8 @@ jobs:
     - name: Verify kubeconfig    
       run: kubectl get nodes
       
-    - name: Create Namespace
-      run: kubectl create ns grafana
+  #  - name: Create Namespace
+  #    run: kubectl create ns grafana
       
     - name: Deploy grafana
       run: |
