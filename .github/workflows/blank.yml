@@ -50,8 +50,8 @@ jobs:
     - name: Create Namespace
       run: kubectl create ns grafana
       
-    - name: Deploy vault
+    - name: Deploy grafana
       run: |
-       helm repo add hashicorp https://helm.releases.hashicorp.com
-       helm install my-vault hashicorp/vault --version 0.27.0
+       helm repo add grafana https://grafana.github.io/helm-charts
+       helm install my-grafana grafana/grafana --version 7.3.3
  
