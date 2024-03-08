@@ -53,7 +53,7 @@ jobs:
         depth: 1
         branch: 'main'
         owner: 'Nazarkulova'
-        repository: 'Grafana'
+        repository: 'grafana'
     
     - name: Access cloned repo
       run: |
