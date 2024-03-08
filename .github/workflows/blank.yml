@@ -9,14 +9,13 @@ on:
       - main
 
 jobs:
-  terraform:
+  grafana:
     runs-on: ubuntu-latest
-
 
     steps:
     - name: Checkout Repository
       uses: actions/checkout@v2
-
+      
     - name: Configure AWS Credentials
       uses: aws-actions/configure-aws-credentials@v2
       with:
@@ -25,31 +24,36 @@ jobs:
         aws-region: us-east-2
 
     - name: Update kubeconfig
-      run: aws eks update-kubeconfig --region us-east-2 --name education-eks-NJoMc7bJ
-
-    - name: Install kubectl and kubens
+      run: aws eks update-kubeconfig --region us-east-2 --name education-eks-3HJh8Qro
+      
+    - name: Install Kubectl
       run: |
-          curl -LO "https://dl.k8s.io/release/$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl"
-          chmod +x ./kubectl
-          sudo mv ./kubectl /usr/local/bin/kubectl
+        curl -LO "https://dl.k8s.io/release/$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl"
+        sudo install -o root -g root -m 0755 kubectl /usr/local/bin/kubectl
 
-          curl -LO https://raw.githubusercontent.com/ahmetb/kubectx/master/kubens
-          chmod +x kubens
-          sudo mv kubens /usr/local/bin/
+    # - name: Create Namespace
+    #   run: kubectl create ns test
 
     - name: Install Helm
       run: |
-          curl -fsSL -o get_helm.sh https://raw.githubusercontent.com/helm/helm/master/scripts/get-helm-3
-          chmod +x get_helm.sh
-          sudo ./get_helm.sh
-        
-    - name: Verify kubeconfig    
-      run: kubectl get nodes
-      
-    - name: Create Namespace
-      run: kubectl create ns grafaba
-    - name: Deploy grafana
+        curl -fsSL -o get_helm.sh https://raw.githubusercontent.com/helm/helm/master/scripts/get-helm-3
+        chmod +x get_helm.sh
+        ./get_helm.sh
+    
+    - name: Clone Grafana
+      uses: GuillaumeFalourd/clone-github-repo-action@v2.3
+      with:
+        depth: 1
+        branch: 'main'
+        owner: 'techtorialdevops'
+        repository: 'Grafana'
+    
+    - name: Access cloned repo
       run: |
-       helm repo add grafana https://grafana.github.io/helm-charts
-       helm install my-grafana grafana/grafana --version 7.3.3
- 
+         cd Grafana
+         ls -la
+
+    - name: Deploy Helm Chart
+      run: |
+        helm repo add grafana https://grafana.github.io/helm-charts
+        helm upgrade my-grafana grafana/grafana -f values.yaml -f values-dev.yaml -n grafana
